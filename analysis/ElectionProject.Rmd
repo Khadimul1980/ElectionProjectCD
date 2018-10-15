@@ -5,9 +5,62 @@ date: "2018-10-15"
 output: workflowr::wflow_html
 ---
 
-## Introduction
-
-```{r}
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
+#Election Project
+2016 Election
+
+
+Next, I am going to get the neccessary library
+
+```{r, error=FALSE,warning=FALSE,message=FALSE, include=FALSE}
+library(tidyverse)
+library(rvest)
+library(ggrepel)
+```
+
+
+```{r,error=FALSE, message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE}
+URL2 <- "https://en.wikipedia.org/wiki/United_States_presidential_election,_2016"
+
+election <- read_html(URL2) %>% html_nodes(xpath = '//*[@id="mw-content-text"]/div/div[37]/table') %>% html_table(fill = TRUE)
+pelect <- election[[1]]
+
+names(pelect)[1]<-"State"
+names(pelect)[2]<-"Junk2"
+names(pelect)[3]<-"Hillary"
+names(pelect)[4]<-"Junk4"
+names(pelect)[5]<-"Junk5"
+names(pelect)[6]<-"Donald"
+names(pelect)[7]<- "Junk7"
+names(pelect)[8]<- "Junk8"
+names(pelect)[9]<- "Junk9"
+names(pelect)[10]<-"Junk10"
+names(pelect)[11]<-"Junk11"
+names(pelect)[12]<-"Junk12"
+names(pelect)[13]<-"Junk13"
+names(pelect)[14]<-"Junk14"
+names(pelect)[15]<-"Junk15"
+names(pelect)[16]<-"Junk16"
+names(pelect)[17]<-"Junk17"
+names(pelect)[18]<-"Junk18"
+names(pelect)[19]<-"Junk19"
+names(pelect)[20]<-"Junk20"
+names(pelect)[21]<-"Junk21"
+names(pelect)[22]<-"Junk22"
+names(pelect)[23]<-"Junk23"
+names(pelect)[24]<-"Junk24"
+names(pelect)[25]<-"Junk25"
+
+pelect <- as.tibble(pelect) %>%
+ select(State, Hillary, Donald) %>%
+ slice(-c(1,10,22,23,32,33,34,58)) %>%
+ mutate(Clinton=parse_number(Hillary, na=character()),
+        Trump=parse_number(Donald, na=character()),
+        PercentDem=((Clinton/(Clinton+Trump))*100),
+        State=replace(State, State=="Maine (at-lg)", "Maine"),
+        State=replace(State, State=="Nebraska (at-lg)", "Nebraska")) %>%
+ select(State,PercentDem)
+```
